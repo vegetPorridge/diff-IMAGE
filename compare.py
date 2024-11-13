@@ -10,7 +10,7 @@ def read_img(path_1, path_2):
     # 确保两张图片尺寸相同
     if img1.shape != img2.shape:
         return None, None
-    return img1, img2
+    return img1.copy(), img2.copy()
 
 
 #assert img1.shape == img2.shape, "两张图片尺寸不一致"
@@ -23,9 +23,9 @@ def pre_process(img1, img2):
 
 
 
-    cv2.imshow('1',gray1)
-    cv2.imshow('2',gray2)
-    cv2.waitKey(0)
+    #cv2.imshow('1',gray1)
+    #cv2.imshow('2',gray2)
+    #cv2.waitKey(0)
     
     return gray1, gray2
     
@@ -42,16 +42,16 @@ def judge_diff(gray1,gray2):
     diff2 = cv2.convertScaleAbs(diff2)
 
     print("SSIM:{}".format(score))
-    cv2.imshow('Difference2', diff2)
-    cv2.waitKey(0)
+    #cv2.imshow('Difference2', diff2)
+    #cv2.waitKey(0)
     
     return score, diff2
 
 def find_diff(img1, img2):
     diff = cv2.absdiff(img1, img2)
     gray_diff = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('Difference2', diff)
-    cv2.waitKey(0)
+    #cv2.imshow('Difference2', diff)
+    #cv2.waitKey(0)
     return gray_diff
 
 def draw_contours(diff2,img1,img2):
@@ -59,11 +59,6 @@ def draw_contours(diff2,img1,img2):
 
     # 阈值处理
     _, thresh = cv2.threshold(diff2, 30, 255, cv2.THRESH_BINARY)
-    cv2.imshow('thresh', thresh)
-    cv2.imshow('diff2', diff2)
-    cv2.waitKey(0)
-    #cv2.imshow('thresh', diff2)
-    #cv2.waitKey(0)
 
     # 找到差异区域
     contours, hierarchy  = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -117,5 +112,19 @@ def main():
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
-main()
+def main_app(path1, path2):
+    print(path1,path2)
+    img1, img2 = read_img(path1,path2)
+    if img1 is None:
+        return "img size file", None, None
+    gray1, gray2 = pre_process(img1.copy(), img2.copy())
+    score, diff2 = judge_diff(gray1.copy(),gray2.copy())
+    if score == -1:
+        return "img not similar",None, None
+    diff = find_diff(img1.copy(), img2.copy())
+    finalimg1, finalimg2 = draw_contours(diff, img1, img2)
+    # 显示结果
+    finalimg1 = cv2.cvtColor(finalimg1, cv2.COLOR_BGR2RGB)
+    finalimg2 = cv2.cvtColor(finalimg2, cv2.COLOR_BGR2RGB)
+    return "success", finalimg1, finalimg2
     
