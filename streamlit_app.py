@@ -6,7 +6,7 @@ from PIL import Image
 import compare as cp
 
 # Set the title of the app
-st.title("Image Uploader")
+st.title("Diff-image Finder")
 
 # Create a temporary directory to store images
 temp_dir = "temp_images"
@@ -32,15 +32,14 @@ if uploaded_files:
 
         result, finalimg1, finalimg2 = cp.main_app(saved_images[0], saved_images[1])
         if result == "success":
-            st.image(saved_images[0], use_container_width=True)
-            st.image(finalimg1, use_container_width=True)
-            st.image(finalimg2, use_container_width=True)
+            col1, col2 = st.columns(2)
+            with col1:
+                st.image(finalimg1, caption='First image', use_container_width=True)
+
+            with col2:
+                st.image(finalimg2, caption='Second image', use_container_width=True)
         else:
             st.info(result)
-        # Display one randomly selected image
-        #selected_image_path = random.choice(saved_images)
-        #image = Image.open(selected_image_path)
-        #st.image(image, caption=os.path.basename(selected_image_path), use_container_width=True)
 
         # Delete the saved images after displaying
         for img_path in saved_images:
