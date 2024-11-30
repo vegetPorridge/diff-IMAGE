@@ -1,2 +1,16 @@
+Before execute this application, Please make sure you have installed the following libraries
+
+```bash
 sudo apt-get update
 sudo apt-get install libgl1-mesa-glx
+```
+
+You can use this command to install the python libraries
+```bash
+pip install -r requirements.txt
+```
+
+Finally, use the streamlit to start the application
+```bash
+streamlit run streamlit_app.py
+```
